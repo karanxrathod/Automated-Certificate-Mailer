@@ -14,9 +14,9 @@ def send_certificate_emails():
     responsive HTML template with an embedded image.
     """
     # --- Configuration ---
-    your_email = "karankailashrathod0@gmail.com"
-    your_password = "xfbt ihwa mmhm gbcn"  # Use your App Password here
-    sender_name = "JIT Google Student Ambassadors" # <-- ADD SENDER NAME HERE
+    your_email = "Your_email"
+    your_password = "Your Email Passwords app "  # Use your App Password here
+    sender_name = "Your Name For sneder" # <-- ADD SENDER NAME HERE
 
     # --- Email Content ---
     subject = "🎉 Your Certificate from the JIT GSA Team is Here!"
@@ -136,4 +136,5 @@ def send_certificate_emails():
     print("\nEmail sending process complete.")
 
 if __name__ == '__main__':
+
     send_certificate_emails()
