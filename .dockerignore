@@ -1,0 +1,13 @@
+# Docker ignore file
+config.py
+*.pyc
+__pycache__/
+.git/
+.gitignore
+*.log
+logs/
+.DS_Store
+*.md
+LICENSE
+examples/
+.github/
