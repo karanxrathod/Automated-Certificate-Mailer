@@ -1,0 +1,8 @@
+# Automated Certificate Mailer - Python Dependencies
+# No external dependencies required - uses Python standard library only!
+# Python 3.7+ is required
+
+# Optional: For development and testing
+# pytest>=7.0.0
+# black>=22.0.0
+# flake8>=4.0.0

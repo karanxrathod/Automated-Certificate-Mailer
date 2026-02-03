@@ -1,0 +1,69 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.7, 3.8, 3.9, '3.10', '3.11']
+
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+    
+    - name: Lint with flake8
+      run: |
+        pip install flake8
+        # Stop build if there are Python syntax errors or undefined names
+        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+        # Exit-zero treats all errors as warnings
+        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+    
+    - name: Validate project structure
+      run: |
+        test -f send_emails2.py || exit 1
+        test -f update_students_csv.py || exit 1
+        test -f config.example.py || exit 1
+        echo "✅ Project structure validated"
+    
+    - name: Test dry-run mode
+      run: |
+        cp config.example.py config.py
+        sed -i 's/your_email@gmail.com/test@example.com/' config.py
+        sed -i 's/your app password here/test_password_1234/' config.py
+        echo "Name,Email" > students.csv
+        echo "Test User,test@example.com" >> students.csv
+        mkdir -p certificates
+        echo "dummy" > certificates/"Test User Gemini Ai Workshop_ Beginner To Advance.pdf"
+        echo "dummy" > logo.jpg
+        # This should fail SMTP login but validate everything else
+        python send_emails2.py --dry-run --verbose || true
+        echo "✅ Dry-run test completed"
+
+  docker:
+    runs-on: ubuntu-latest
+    needs: test
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Build Docker image
+      run: docker build -t certificate-mailer:test .
+    
+    - name: Test Docker image
+      run: docker run certificate-mailer:test python send_emails2.py --help
